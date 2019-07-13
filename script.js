@@ -252,7 +252,7 @@ const makeRandomObjects = function (gameKey, count) {
 const createGameButton = function (gameKey) {
   let container = document.createElement('div')
   container.innerHTML = `
-    <div class="Box Box_hidden Box_big Box_rect">
+    <div class="Box Box_big Box_rect">
       <div class="Box-Container">
         <div class="Box-Content">
           <img class="Box-Image" src="./assets/${gameKey}/logo.png">
@@ -266,7 +266,7 @@ const createGameButton = function (gameKey) {
 const createTypeButton = function (typeKey) {
   let container = document.createElement('div')
   container.innerHTML = `
-    <div class="Box Box_hidden Box_circle Box_big">
+    <div class="Box Box_circle Box_big">
       <div class="Box-Content">
         <img class="Box-Image" src="./assets/${typeKey}.png">
       </div>
@@ -275,10 +275,11 @@ const createTypeButton = function (typeKey) {
   return container.firstElementChild
 }
 
-const createObjectButton = function (object) {
+const createObjectButton = function (object, selected) {
+  let selectedClass = selected ? "Box_selected " : ""
   let container = document.createElement('div')
   container.innerHTML = `
-    <div class="Box Box_hidden Box_${object.typeKey}">
+    <div class="Box ${selectedClass}Box_${object.typeKey}">
       <div class="Box-Cap"></div>
       <div class="Box-Color"></div>
       <div class="Box-Container">
@@ -319,17 +320,31 @@ const updateObjects = function (state) {
   let objectList = state.objectList
   const handleObjectButton = function (object) {
     return () => {
-      state.activeObject = object
-      setTypeSelectors(state)
+      if (state.activeObject !== object) {
+        state.activeObject = object
+        updateObjects(state)
+        setTypeSelectors(state)
+      } else {
+        state.activeObject = null
+        updateObjects(state)
+        clearSelectors(state)
+      }
     }
   }
   for (let index = 0; index < boxList.length; index++) {
     let box = boxList[index]
-    let newBox = createObjectButton(objectList[index])
+    let object = objectList[index]
+    let newBox = createObjectButton(object, object === state.activeObject)
     objectToolbar.replaceChild(newBox, box)
     exposeButton(newBox, index)
     newBox.addEventListener('click', handleObjectButton(objectList[index]))
   }
+}
+
+const clearSelectors = function (state) {
+  let main = document.getElementById('main')
+  let previousContent = main.querySelector('.Main-Content')
+  previousContent ? main.removeChild(previousContent) : null
 }
 
 const setGameSelectors = function (state) {
@@ -352,8 +367,7 @@ const setGameSelectors = function (state) {
   content.appendChild(smbuButton)
   content.appendChild(sm3dButton)
   // Set Interactivity
-  let previousContent = main.querySelector('.Main-Content')
-  previousContent ? main.removeChild(previousContent) : null
+  clearSelectors(state)
   main.appendChild(content)
   exposeButtonList([smbButton, smb3Button, smwButton, smbuButton, sm3dButton])
   const handleGameButton = function (gameKey) {
@@ -388,8 +402,7 @@ const setTypeSelectors = function (state) {
   content.appendChild(enemiesButton)
   content.appendChild(gizmosButton)
   // Set Interactivity
-  let previousContent = main.querySelector('.Main-Content')
-  previousContent ? main.removeChild(previousContent) : null
+  clearSelectors(state)
   main.appendChild(content)
   exposeButtonList([terrainButton, itemsButton, enemiesButton, gizmosButton])
   const handleTypeButton = function (typeKey) {
@@ -407,20 +420,29 @@ const setObjectSelectors = function (state, typeKey) {
   let main = document.getElementById('main')
   // Create Elements
   let objectKeys = gameObjects[state.activeGameKey][typeKey]
-  let typeObjects = objectKeys.map((objectKey, index) => makeObject({gameKey: state.activeGameKey, typeKey, index}))
-  let objectButtons = typeObjects.map((object) => createObjectButton(object))
+  let objectList = objectKeys.map((objectKey, index) => makeObject({gameKey: state.activeGameKey, typeKey, index}))
+  let objectButtons = objectList.map((object) => createObjectButton(object))
   let container = document.createElement('div')
   container.innerHTML = `
     <div class="Main-Content">
     </div>
   `
   let content = container.querySelector('.Main-Content')
-  objectButtons.forEach((button) => {
+  const handleObjectButton = function (object) {
+    return () => {
+      let index = state.objectList.indexOf(state.activeObject)
+      state.activeObject = null
+      state.objectList[index] = object
+      updateObjects(state)
+      clearSelectors(state)
+    }
+  }
+  objectButtons.forEach((button, index) => {
     content.appendChild(button)
+    button.addEventListener('click', handleObjectButton(objectList[index]))
   })
   // Set Interactivity
-  let previousContent = main.querySelector('.Main-Content')
-  previousContent ? main.removeChild(previousContent) : null
+  clearSelectors(state)
   main.appendChild(content)
   exposeButtonList(objectButtons)
 }
@@ -466,9 +488,10 @@ window.addEventListener('DOMContentLoaded', (event) => {
   let state = new State()
   updateGameButton(state)
   updateObjects(state)
-  let boxList = Array.prototype.slice.apply(document.body.querySelectorAll('.Box_hidden'))
+  let boxList = Array.prototype.slice.apply(document.body.querySelectorAll('.Box'))
   for (let index = 0; index < boxList.length; index++) {
     let box = boxList[index]
+    box.classList.add('Box_hidden')
     exposeButton(box, index)
   }
   document.getElementById('shuffle_button').addEventListener('click', (event) => {
