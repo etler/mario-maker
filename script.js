@@ -267,6 +267,7 @@ const createObjectButton = function (object) {
 }
 
 const exposeButton = function (button, delay = 0) {
+  button.classList.add('Box_hidden')
   setTimeout(() => {
     button.classList.remove('Box_hidden')
   }, 10*(delay+1))
@@ -331,7 +332,6 @@ const updateObjects = function (state) {
     }
     newBox.classList.add('Box_animated')
     objectToolbar.replaceChild(newBox, box)
-    exposeButton(newBox, index)
     newBox.addEventListener('click', handleObjectButton(objectList[index]))
     newBox.addEventListener('animationend', handleLongPress(objectList[index]));
   }
