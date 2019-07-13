@@ -294,7 +294,7 @@ const createObjectButton = function (object) {
 const exposeButton = function (button, delay = 0) {
   setTimeout(() => {
     button.classList.remove('Box_hidden')
-  }, 25*(delay+1))
+  }, 10*(delay+1))
 }
 
 const exposeButtonList = function (buttonList, offset = 0) {
@@ -317,11 +317,18 @@ const updateObjects = function (state) {
   let objectToolbar = document.getElementById('object_toolbar')
   let boxList = Array.prototype.slice.apply(objectToolbar.querySelectorAll('.Box'))
   let objectList = state.objectList
+  const handleObjectButton = function (object) {
+    return () => {
+      state.activeObject = object
+      setTypeSelectors(state)
+    }
+  }
   for (let index = 0; index < boxList.length; index++) {
     let box = boxList[index]
     let newBox = createObjectButton(objectList[index])
     objectToolbar.replaceChild(newBox, box)
     exposeButton(newBox, index)
+    newBox.addEventListener('click', handleObjectButton(objectList[index]))
   }
 }
 
@@ -363,10 +370,66 @@ const setGameSelectors = function (state) {
   sm3dButton.addEventListener('click', handleGameButton('sm3d'))
 }
 
+const setTypeSelectors = function (state) {
+  let main = document.getElementById('main')
+  // Create Elements
+  let terrainButton = createTypeButton('terrain')
+  let itemsButton = createTypeButton('items')
+  let enemiesButton = createTypeButton('enemies')
+  let gizmosButton = createTypeButton('gizmos')
+  let container = document.createElement('div')
+  container.innerHTML = `
+    <div class="Main-Content">
+    </div>
+  `
+  let content = container.querySelector('.Main-Content')
+  content.appendChild(terrainButton)
+  content.appendChild(itemsButton)
+  content.appendChild(enemiesButton)
+  content.appendChild(gizmosButton)
+  // Set Interactivity
+  let previousContent = main.querySelector('.Main-Content')
+  previousContent ? main.removeChild(previousContent) : null
+  main.appendChild(content)
+  exposeButtonList([terrainButton, itemsButton, enemiesButton, gizmosButton])
+  const handleTypeButton = function (typeKey) {
+    return () => {
+      setObjectSelectors(state, typeKey)
+    }
+  }
+  terrainButton.addEventListener('click', handleTypeButton('terrain'))
+  itemsButton.addEventListener('click', handleTypeButton('items'))
+  enemiesButton.addEventListener('click', handleTypeButton('enemies'))
+  gizmosButton.addEventListener('click', handleTypeButton('gizmos'))
+}
+
+const setObjectSelectors = function (state, typeKey) {
+  let main = document.getElementById('main')
+  // Create Elements
+  let objectKeys = gameObjects[state.activeGameKey][typeKey]
+  let typeObjects = objectKeys.map((objectKey, index) => makeObject({gameKey: state.activeGameKey, typeKey, index}))
+  let objectButtons = typeObjects.map((object) => createObjectButton(object))
+  let container = document.createElement('div')
+  container.innerHTML = `
+    <div class="Main-Content">
+    </div>
+  `
+  let content = container.querySelector('.Main-Content')
+  objectButtons.forEach((button) => {
+    content.appendChild(button)
+  })
+  // Set Interactivity
+  let previousContent = main.querySelector('.Main-Content')
+  previousContent ? main.removeChild(previousContent) : null
+  main.appendChild(content)
+  exposeButtonList(objectButtons)
+}
+
 // Global State
 
 class State {
   #activeGameKey = 'smbu'
+  activeObject = null
   objectList = []
   constructor () {
     this.shuffle()
