@@ -327,6 +327,7 @@ const updateObjects = function (state) {
     let box = boxList[index]
     let object = objectList[index]
     let newBox = createObjectButton(object, object === state.activeObject)
+    newBox.classList.add('Box_animated')
     objectToolbar.replaceChild(newBox, box)
     exposeButton(newBox, index)
     newBox.addEventListener('click', handleObjectButton(objectList[index]))
