@@ -273,6 +273,18 @@ const createGameButton = function (gameKey) {
   return container.firstElementChild
 }
 
+const createTypeButton = function (typeKey) {
+  let container = document.createElement('div')
+  container.innerHTML = `
+    <div class="Box Box_hidden Box_circle Box_big">
+      <div class="Box-Content">
+        <img class="Box-Image" src="./assets/${typeKey}.png">
+      </div>
+    </div>
+  `
+  return container.firstElementChild
+}
+
 const shuffle = function (gameKey) {
   let objectToolbar = document.getElementById('object_toolbar')
   let boxList = Array.prototype.slice.apply(objectToolbar.querySelectorAll('.Box'))
