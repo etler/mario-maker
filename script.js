@@ -285,7 +285,6 @@ const updateGameButton = function (state) {
   let mainToolbar = document.getElementById('main_toolbar')
   let gameButton = createGameButton(state.activeGameKey)
   mainToolbar.replaceChild(gameButton, mainToolbar.querySelector('.Box_rect'))
-  exposeButton(gameButton)
   gameButton.addEventListener('click', (event) => setGameSelectors(state))
 }
 
@@ -462,8 +461,10 @@ class State {
       throw new Error('State Error: Invalid Game Key')
     }
     if (this.#activeGameKey !== gameKey) {
+      let previousGameKey = this.#activeGameKey
       this.#activeGameKey = gameKey
-      if (gameKey === 'sm3d') {
+      if (gameKey === 'sm3d' || previousGameKey === 'sm3d') {
+        this.objectList = []
         this.shuffle()
       } else {
         for (let index = 0; index < this.objectList.length; index++) {
