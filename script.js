@@ -249,12 +249,11 @@ const createTypeButton = function (typeKey) {
   return container.firstElementChild
 }
 
-const createObjectButton = function (object, selected) {
-  let selectedClass = selected ? "Box_selected " : ""
+const createObjectButton = function (object) {
   let lockedClass = object.locked ? "Box_locked " : ""
   let container = document.createElement('div')
   container.innerHTML = `
-    <div class="Box ${lockedClass}${selectedClass}Box_${object.typeKey}">
+    <div class="Box ${lockedClass}Box_${object.typeKey}">
       <div class="Box-Cap"></div>
       <div class="Box-Color"></div>
       <div class="Box-Container">
@@ -326,7 +325,10 @@ const updateObjects = function (state) {
   for (let index = 0; index < boxList.length; index++) {
     let box = boxList[index]
     let object = objectList[index]
-    let newBox = createObjectButton(object, object === state.activeObject)
+    let newBox = createObjectButton(object)
+    if (object === state.activeObject) {
+      newBox.classList.add('Box_selected')
+    }
     newBox.classList.add('Box_animated')
     objectToolbar.replaceChild(newBox, box)
     exposeButton(newBox, index)
