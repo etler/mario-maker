@@ -447,22 +447,22 @@ const setObjectSelectors = function (state, typeKey) {
 // Global State
 
 class State {
-  #activeGameKey = 'smbu'
-  activeObject = null
-  objectList = []
   constructor () {
+    this._activeGameKey = 'smbu'
+    this.activeObject = null
+    this.objectList = []
     this.shuffle()
   }
   get activeGameKey () {
-    return this.#activeGameKey
+    return this._activeGameKey
   }
   set activeGameKey (gameKey) {
     if (Object.keys(nameMap.games).indexOf(gameKey) === -1) {
       throw new Error('State Error: Invalid Game Key')
     }
-    if (this.#activeGameKey !== gameKey) {
-      let previousGameKey = this.#activeGameKey
-      this.#activeGameKey = gameKey
+    if (this._activeGameKey !== gameKey) {
+      let previousGameKey = this._activeGameKey
+      this._activeGameKey = gameKey
       if (gameKey === 'sm3d' || previousGameKey === 'sm3d') {
         this.objectList = []
         this.shuffle()
