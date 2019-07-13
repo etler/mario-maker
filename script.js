@@ -215,9 +215,11 @@ const makeObject = function ({gameKey, typeKey, index, locked = false}) {
   }
 }
 
-const makeRandomObject = function (gameKey) {
-  let typeKeys = Object.keys(nameMap.types)
-  let typeKey = typeKeys[Math.floor(Math.random()*typeKeys.length)]
+const makeRandomObject = function (gameKey, typeKey) {
+  if (!typeKey) {
+    let typeKeys = Object.keys(nameMap.types)
+    typeKey = typeKeys[Math.floor(Math.random()*typeKeys.length)]
+  }
   let typeObjectList = gameObjects[gameKey][typeKey]
   let objectIndex = Math.floor(Math.random()*typeObjectList.length)
   return makeObject({gameKey, typeKey, index: objectIndex})
@@ -259,6 +261,22 @@ const createObjectButton = function (object) {
       <div class="Box-Container">
         <div class="Box-Content Box-Content_border">
           <img class="Box-Image" src="${object.image}">
+        </div>
+      </div>
+    </div>
+  `
+  return container.firstElementChild
+}
+
+const createRerollButton = function (typeKey) {
+  let container = document.createElement('div')
+  container.innerHTML = `
+    <div class="Box Box_${typeKey}">
+      <div class="Box-Cap"></div>
+      <div class="Box-Color"></div>
+      <div class="Box-Container">
+        <div class="Box-Content Box-Content_border">
+          ?
         </div>
       </div>
     </div>
@@ -417,6 +435,7 @@ const setObjectSelectors = function (state, typeKey) {
   let objectKeys = gameObjects[state.activeGameKey][typeKey]
   let objectList = objectKeys.map((objectKey, index) => makeObject({gameKey: state.activeGameKey, typeKey, index}))
   let objectButtons = objectList.map((object) => createObjectButton(object))
+  let rerollButton = createRerollButton(typeKey)
   let container = document.createElement('div')
   container.innerHTML = `
     <div class="Main-Content">
@@ -438,10 +457,21 @@ const setObjectSelectors = function (state, typeKey) {
     content.appendChild(button)
     button.addEventListener('click', handleObjectButton(objectList[index]))
   })
+  content.appendChild(rerollButton)
   // Set Interactivity
+  const handleRerollButton = function (event) {
+      let index = state.objectList.indexOf(state.activeObject)
+      let locked = state.activeObject.locked
+      state.activeObject = null
+      state.objectList[index] = makeRandomObject(state.activeGameKey, typeKey)
+      state.objectList[index].locked = locked
+      updateObjects(state)
+      clearSelectors(state)
+  }
   clearSelectors(state)
   main.appendChild(content)
-  exposeButtonList(objectButtons)
+  exposeButtonList([...objectButtons, rerollButton])
+  rerollButton.addEventListener('click', handleRerollButton)
 }
 
 // Global State
