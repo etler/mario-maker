@@ -249,23 +249,6 @@ const makeRandomObjects = function (gameKey, count) {
   return objectList
 }
 
-const createButton = function (object) {
-  let typeClass = `Box_${object.typeKey}`
-  let container = document.createElement('div')
-  container.innerHTML = `
-    <div class="Box Box_hidden ${typeClass}">
-      <div class="Box-Cap"></div>
-      <div class="Box-Color"></div>
-      <div class="Box-Container">
-        <div class="Box-Content Box-Content_border">
-          <img class="Box-Image" src="${object.image}">
-        </div>
-      </div>
-    </div>
-  `
-  return container.firstElementChild
-}
-
 const createGameButton = function (gameKey) {
   let container = document.createElement('div')
   container.innerHTML = `
@@ -286,6 +269,22 @@ const createTypeButton = function (typeKey) {
     <div class="Box Box_hidden Box_circle Box_big">
       <div class="Box-Content">
         <img class="Box-Image" src="./assets/${typeKey}.png">
+      </div>
+    </div>
+  `
+  return container.firstElementChild
+}
+
+const createObjectButton = function (object) {
+  let container = document.createElement('div')
+  container.innerHTML = `
+    <div class="Box Box_hidden Box_${object.typeKey}">
+      <div class="Box-Cap"></div>
+      <div class="Box-Color"></div>
+      <div class="Box-Container">
+        <div class="Box-Content Box-Content_border">
+          <img class="Box-Image" src="${object.image}">
+        </div>
       </div>
     </div>
   `
@@ -320,7 +319,7 @@ const updateObjects = function (state) {
   let objectList = state.objectList
   for (let index = 0; index < boxList.length; index++) {
     let box = boxList[index]
-    let newBox = createButton(objectList[index])
+    let newBox = createObjectButton(objectList[index])
     objectToolbar.replaceChild(newBox, box)
     exposeButton(newBox, index)
   }
