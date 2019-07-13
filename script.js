@@ -200,53 +200,27 @@ gameObjects = {
   }
 }
 
-let imagesHtml = ''
-
-for (let gameKey in gameObjects) {
-  imagesHtml += `<h1>${nameMap.games[gameKey]}</h1>`
-  for (let typeKey in gameObjects[gameKey]) {
-    imagesHtml += `<h2>${nameMap.types[typeKey]}</h2><div style="display: flex">`
-    for (let objectIndex = 0; objectIndex < gameObjects[gameKey][typeKey].length; objectIndex++) {
-      let objectList = gameObjects[gameKey][typeKey]
-      let objectKey = objectList[objectIndex]
-      let objectName = nameMap[typeKey][objectKey]
-      imagesHtml += `<div style="margin: 10px"><img src="./assets/${gameKey}/${typeKey}/${objectKey}.png"></img><h3>${objectName}</h3></div>`
-    }
-    imagesHtml += `</div>`
-  }
-}
-
 // Methods
 
-const makeObject = function ({gameKey, typeKey, index}) {
+const makeObject = function ({gameKey, typeKey, index, locked = false}) {
   const objectKey = gameObjects[gameKey][typeKey][index]
   return {
     gameKey,
     typeKey,
     objectKey,
     index,
+    locked,
     name: nameMap[typeKey][objectKey],
-    image: `./assets/${gameKey}/${typeKey}/${objectKey}.png`,
-    locked: false
+    image: `./assets/${gameKey}/${typeKey}/${objectKey}.png`
   }
 }
 
-const makeRandomObjects = function (gameKey, count) {
-  let objectList = []
-  for (let index = 0; index < count; index++) {
-    let lastLength = objectList.length
-    while(objectList.length === lastLength) {
-      let typeKeys = Object.keys(nameMap.types)
-      let typeKey = typeKeys[Math.floor(Math.random()*typeKeys.length)]
-      let typeObjectList = gameObjects[gameKey][typeKey]
-      let objectIndex = Math.floor(Math.random()*typeObjectList.length)
-      let object = makeObject({gameKey, typeKey, index: objectIndex})
-      if (!objectList.find((findObject) => findObject.image === object.image)) {
-        objectList.push(object)
-      }
-    }
-  }
-  return objectList
+const makeRandomObject = function (gameKey) {
+  let typeKeys = Object.keys(nameMap.types)
+  let typeKey = typeKeys[Math.floor(Math.random()*typeKeys.length)]
+  let typeObjectList = gameObjects[gameKey][typeKey]
+  let objectIndex = Math.floor(Math.random()*typeObjectList.length)
+  return makeObject({gameKey, typeKey, index: objectIndex})
 }
 
 const createGameButton = function (gameKey) {
@@ -277,9 +251,10 @@ const createTypeButton = function (typeKey) {
 
 const createObjectButton = function (object, selected) {
   let selectedClass = selected ? "Box_selected " : ""
+  let lockedClass = object.locked ? "Box_locked " : ""
   let container = document.createElement('div')
   container.innerHTML = `
-    <div class="Box ${selectedClass}Box_${object.typeKey}">
+    <div class="Box ${lockedClass}${selectedClass}Box_${object.typeKey}">
       <div class="Box-Cap"></div>
       <div class="Box-Color"></div>
       <div class="Box-Container">
@@ -314,20 +289,37 @@ const updateGameButton = function (state) {
   gameButton.addEventListener('click', (event) => setGameSelectors(state))
 }
 
+let disableClick = false
+
 const updateObjects = function (state) {
   let objectToolbar = document.getElementById('object_toolbar')
   let boxList = Array.prototype.slice.apply(objectToolbar.querySelectorAll('.Box'))
   let objectList = state.objectList
   const handleObjectButton = function (object) {
-    return () => {
-      if (state.activeObject !== object) {
-        state.activeObject = object
-        updateObjects(state)
-        setTypeSelectors(state)
-      } else {
-        state.activeObject = null
-        updateObjects(state)
-        clearSelectors(state)
+    return (event) => {
+      if (disableClick !== true) {
+        if (state.activeObject !== object) {
+          state.activeObject = object
+          updateObjects(state)
+          setTypeSelectors(state)
+        } else {
+          state.activeObject = null
+          updateObjects(state)
+          clearSelectors(state)
+        }
+      }
+    }
+  }
+  const handleLongPress = function (object) {
+    return (event) => {
+      if (event.target === event.currentTarget) {
+        object.locked = !object.locked
+        if (object.locked) {
+          event.target.classList.add('Box_locked')
+        } else {
+          event.target.classList.remove('Box_locked')
+        }
+        disableClick = true
       }
     }
   }
@@ -338,6 +330,7 @@ const updateObjects = function (state) {
     objectToolbar.replaceChild(newBox, box)
     exposeButton(newBox, index)
     newBox.addEventListener('click', handleObjectButton(objectList[index]))
+    newBox.addEventListener('animationend', handleLongPress(objectList[index]));
   }
 }
 
@@ -371,7 +364,7 @@ const setGameSelectors = function (state) {
   main.appendChild(content)
   exposeButtonList([smbButton, smb3Button, smwButton, smbuButton, sm3dButton])
   const handleGameButton = function (gameKey) {
-    return () => {
+    return (event) => {
       state.activeGameKey = gameKey
       updateGameButton(state)
       updateObjects(state)
@@ -406,7 +399,7 @@ const setTypeSelectors = function (state) {
   main.appendChild(content)
   exposeButtonList([terrainButton, itemsButton, enemiesButton, gizmosButton])
   const handleTypeButton = function (typeKey) {
-    return () => {
+    return (event) => {
       setObjectSelectors(state, typeKey)
     }
   }
@@ -429,10 +422,12 @@ const setObjectSelectors = function (state, typeKey) {
   `
   let content = container.querySelector('.Main-Content')
   const handleObjectButton = function (object) {
-    return () => {
+    return (event) => {
       let index = state.objectList.indexOf(state.activeObject)
+      let locked = state.activeObject.locked
       state.activeObject = null
       state.objectList[index] = object
+      state.objectList[index].locked = locked
       updateObjects(state)
       clearSelectors(state)
     }
@@ -477,7 +472,21 @@ class State {
     }
   }
   shuffle () {
-    this.objectList = makeRandomObjects(this.activeGameKey, 12)
+    let newObjectList = []
+    for (let index = 0; index < 12; index++) {
+      let object = this.objectList[index]
+      if (object && !object.locked) {
+        this.objectList[index] = {}
+      }
+    }
+    for (let index = 0; index < 12; index++) {
+      while(!this.objectList[index] || !this.objectList[index].image) {
+        let newObject = makeRandomObject(this.activeGameKey)
+        if (!this.objectList.find((findObject) => findObject.image === newObject.image)) {
+          this.objectList[index] = newObject
+        }
+      }
+    }
     return this
   }
 }
@@ -497,4 +506,6 @@ window.addEventListener('DOMContentLoaded', (event) => {
   document.getElementById('shuffle_button').addEventListener('click', (event) => {
     updateObjects(state.shuffle())
   })
+  document.body.addEventListener('click', (event) => {disableClick = false})
+  document.body.addEventListener('mouseout', (event) => {disableClick = false})
 })

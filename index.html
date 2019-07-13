@@ -10,6 +10,7 @@
     background: #c5e3fd;
     padding: 0;
     margin: 0;
+    user-select: none;
   }
 
   .Main {}
@@ -48,7 +49,6 @@
     margin-top: 18px;
     background: white;
     border-radius: 8px;
-    overflow: hidden;
     box-shadow: 0 3px 4px rgba(0, 0, 0, 0.2);
     transform: scale(1.001, 1.001);
     transition: transform 0.25s;
@@ -87,6 +87,20 @@
     transform: scale(1.2, 1.2);
   }
 
+  .Box_locked::before {
+    content: '';
+    position: absolute;
+    background: center / 50% no-repeat url('./assets/pin.svg');
+    background-color: currentColor;
+    width: 24px;
+    height: 24px;
+    top: 0px;
+    right: 0px;
+    z-index: 3;
+    border-radius: 50%;
+    transform: translate(8px, -8px);
+  }
+
   .Box_hidden {
     transform: scale(0, 0);
   }
@@ -109,6 +123,7 @@
 
   .Box_circle {
     border-radius: 50%;
+    overflow: hidden;
   }
 
   .Box_rect {
@@ -128,6 +143,7 @@
     background: currentColor;
     clip-path: polygon(50% 50%, 50% 0%, 50% 0%, 50% 0%, 50% 0%, 50% 0%, 50% 0%);
     z-index: 0;
+    border-radius: 8px;
   }
 
   .Box:active .Box-Color {
@@ -162,6 +178,8 @@
     height: 6px;
     z-index: 2;
     background: currentColor;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
   }
 
   .Box-Container {
