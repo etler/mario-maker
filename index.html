@@ -1,19 +1,24 @@
 <html>
 <head>
   <title>Super Mario Maker 2: 12 Item Challenge</title>
+  <link href="https://fonts.googleapis.com/css?family=Lato&display=swap" rel="stylesheet">
   <style>
   * {
     box-sizing: border-box;
   }
 
   body {
+    font-family: 'Lato', sans-serif;
     background: #c5e3fd;
     padding: 0;
     margin: 0;
     user-select: none;
   }
 
-  .Main {}
+  .Main {
+    max-width: 1280px;
+    margin: auto;
+  }
 
   .Main-Content {
     display: flex;
@@ -212,6 +217,23 @@
   .Box-Image {
     width: 100%;
   }
+
+  .Help {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 3px 4px rgba(0, 0, 0, 0.2);
+    padding: 30px 50px;
+    color: #444;
+    user-select: text;
+  }
+
+  h1 {
+    letter-spacing: 2px;
+  }
+  p, li {
+    letter-spacing: 0.4px;
+    line-height: 24px;
+  }
   </style>
   <script src="./script.js"></script>
 </head>
@@ -342,6 +364,31 @@
     </div>
   </div>
   <div id="main" class="Main">
+    <div class="Main-Content">
+      <div class="Help">
+        <h1>Super Mario Maker 2 — The 12 Item Challenge</h1>
+        <p>
+          The 12 Item Challenge is a level building challenge where you try to design a level by only using 12 objects pinned to your toolbar. It's a great way to practice your design skills by focusing in on just a few course elements and iterating on those to create a tighter, more cohesive level design.
+          <ul>
+            <li>
+              Click the game style button to choose your preferred game style.
+            </li>
+            <li>
+              Click the shuffle button to randomize your tiles.
+            </li>
+            <li>
+              Click on a tile to manually select a course element.
+            </li>
+            <li>
+              Click and hold on a tile to pit it to prevent it from being randomized.
+            </li>
+            <li>
+              Have fun!
+            </li>
+          </ul>
+        </p>
+      </div>
+    </div>
   </div>
 </body>
 </html>
