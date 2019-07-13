@@ -1,3 +1,5 @@
+// Data
+
 nameMap = {
   "games": {
     "smb": "Super Mario Bros.",
@@ -214,17 +216,22 @@ for (let gameKey in gameObjects) {
   }
 }
 
-const getObject = function (gameKey, typeKey, objectKey) {
+// Methods
+
+const makeObject = function ({gameKey, typeKey, index}) {
+  const objectKey = gameObjects[gameKey][typeKey][index]
   return {
     gameKey,
     typeKey,
     objectKey,
+    index,
     name: nameMap[typeKey][objectKey],
-    image: `./assets/${gameKey}/${typeKey}/${objectKey}.png`
+    image: `./assets/${gameKey}/${typeKey}/${objectKey}.png`,
+    locked: false
   }
 }
 
-const getRandomObjects = function (gameKey, count) {
+const makeRandomObjects = function (gameKey, count) {
   let objectList = []
   for (let index = 0; index < count; index++) {
     let lastLength = objectList.length
@@ -232,9 +239,9 @@ const getRandomObjects = function (gameKey, count) {
       let typeKeys = Object.keys(nameMap.types)
       let typeKey = typeKeys[Math.floor(Math.random()*typeKeys.length)]
       let typeObjectList = gameObjects[gameKey][typeKey]
-      let objectKey = typeObjectList[Math.floor(Math.random()*typeObjectList.length)]
-      let object = getObject(gameKey, typeKey, objectKey)
-      if (!objectList.find((fineObject) => fineObject.image === object.image)) {
+      let objectIndex = Math.floor(Math.random()*typeObjectList.length)
+      let object = makeObject({gameKey, typeKey, index: objectIndex})
+      if (!objectList.find((findObject) => findObject.image === object.image)) {
         objectList.push(object)
       }
     }
@@ -262,7 +269,7 @@ const createButton = function (object) {
 const createGameButton = function (gameKey) {
   let container = document.createElement('div')
   container.innerHTML = `
-    <div id="game_button" class="Box Box_hidden Box_big Box_rect">
+    <div class="Box Box_hidden Box_big Box_rect">
       <div class="Box-Container">
         <div class="Box-Content">
           <img class="Box-Image" src="./assets/${gameKey}/logo.png">
@@ -285,33 +292,124 @@ const createTypeButton = function (typeKey) {
   return container.firstElementChild
 }
 
-const shuffle = function (gameKey) {
-  let objectToolbar = document.getElementById('object_toolbar')
-  let boxList = Array.prototype.slice.apply(objectToolbar.querySelectorAll('.Box'))
-  let objects = getRandomObjects(gameKey, boxList.length)
-  for (let index = 0; index < boxList.length; index++) {
-    let box = boxList[index]
-    let newBox = createButton(objects[index])
-    objectToolbar.replaceChild(newBox, box)
-    setTimeout(((box) => {
-      return () => box.classList.remove('Box_hidden')
-    })(newBox), 25*(index+1))
+const exposeButton = function (button, delay = 0) {
+  setTimeout(() => {
+    button.classList.remove('Box_hidden')
+  }, 25*(delay+1))
+}
+
+const exposeButtonList = function (buttonList, offset = 0) {
+  for (let index = 0; index < buttonList.length; index++) {
+    exposeButton(buttonList[index], index + offset)
   }
 }
 
-window.addEventListener('DOMContentLoaded', (event) => {
-  let activeGameKey = 'smbu'
+// Global Mutators
+
+const updateGameButton = function (state) {
   let mainToolbar = document.getElementById('main_toolbar')
-  let gameButton = document.getElementById('game_button')
-  mainToolbar.replaceChild(createGameButton(activeGameKey), gameButton)
-  shuffle(activeGameKey)
+  let gameButton = createGameButton(state.activeGameKey)
+  mainToolbar.replaceChild(gameButton, mainToolbar.querySelector('.Box_rect'))
+  exposeButton(gameButton)
+  gameButton.addEventListener('click', (event) => setGameSelectors(state))
+}
+
+const updateObjects = function (state) {
+  let objectToolbar = document.getElementById('object_toolbar')
+  let boxList = Array.prototype.slice.apply(objectToolbar.querySelectorAll('.Box'))
+  let objectList = state.objectList
+  for (let index = 0; index < boxList.length; index++) {
+    let box = boxList[index]
+    let newBox = createButton(objectList[index])
+    objectToolbar.replaceChild(newBox, box)
+    exposeButton(newBox, index)
+  }
+}
+
+const setGameSelectors = function (state) {
+  let main = document.getElementById('main')
+  // Create Elements
+  let smbButton = createGameButton('smb')
+  let smb3Button = createGameButton('smb3')
+  let smwButton = createGameButton('smw')
+  let smbuButton = createGameButton('smbu')
+  let sm3dButton = createGameButton('sm3d')
+  let container = document.createElement('div')
+  container.innerHTML = `
+    <div class="Main-Content">
+    </div>
+  `
+  let content = container.querySelector('.Main-Content')
+  content.appendChild(smbButton)
+  content.appendChild(smb3Button)
+  content.appendChild(smwButton)
+  content.appendChild(smbuButton)
+  content.appendChild(sm3dButton)
+  // Set Interactivity
+  let previousContent = main.querySelector('.Main-Content')
+  previousContent ? main.removeChild(previousContent) : null
+  main.appendChild(content)
+  exposeButtonList([smbButton, smb3Button, smwButton, smbuButton, sm3dButton])
+  const handleGameButton = function (gameKey) {
+    return () => {
+      state.activeGameKey = gameKey
+      updateGameButton(state)
+      updateObjects(state)
+    }
+  }
+  smbButton.addEventListener('click', handleGameButton('smb'))
+  smb3Button.addEventListener('click', handleGameButton('smb3'))
+  smwButton.addEventListener('click', handleGameButton('smw'))
+  smbuButton.addEventListener('click', handleGameButton('smbu'))
+  sm3dButton.addEventListener('click', handleGameButton('sm3d'))
+}
+
+// Global State
+
+class State {
+  #activeGameKey = 'smbu'
+  objectList = []
+  constructor () {
+    this.shuffle()
+  }
+  get activeGameKey () {
+    return this.#activeGameKey
+  }
+  set activeGameKey (gameKey) {
+    if (Object.keys(nameMap.games).indexOf(gameKey) === -1) {
+      throw new Error('State Error: Invalid Game Key')
+    }
+    if (this.#activeGameKey !== gameKey) {
+      this.#activeGameKey = gameKey
+      if (gameKey === 'sm3d') {
+        this.shuffle()
+      } else {
+        for (let index = 0; index < this.objectList.length; index++) {
+          let object = this.objectList[index]
+          object.gameKey = this.activeGameKey
+          this.objectList[index] = makeObject(object)
+        }
+      }
+    }
+  }
+  shuffle () {
+    this.objectList = makeRandomObjects(this.activeGameKey, 12)
+    return this
+  }
+}
+
+// Global Management
+
+window.addEventListener('DOMContentLoaded', (event) => {
+  let state = new State()
+  updateGameButton(state)
+  updateObjects(state)
   let boxList = Array.prototype.slice.apply(document.body.querySelectorAll('.Box_hidden'))
   for (let index = 0; index < boxList.length; index++) {
     let box = boxList[index]
-    setTimeout(() => {
-      box.classList.remove('Box_hidden')
-    }, 25*index)
+    exposeButton(box, index)
   }
-  document.getElementById('shuffle_button').addEventListener('click', (event) => shuffle(activeGameKey))
-  // document.body.innerHTML = imagesHtml
+  document.getElementById('shuffle_button').addEventListener('click', (event) => {
+    updateObjects(state.shuffle())
+  })
 })
