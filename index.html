@@ -15,6 +15,8 @@
 
     .TopBar {
         display: flex;
+        align-items: center;
+        justify-content: center;
         height: 170px;
         background: rgba(255, 255, 255, 0.25);
         box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.05), 0 0 10px rgba(0, 0, 0, 0.1);
@@ -98,6 +100,11 @@
         border-radius: 50%;
     }
 
+    .Box_rect {
+        height: 50px;
+        border-radius: 5px;
+    }
+
     .Box_selected, .Box_selected .Box-Content {
         background: #601b20;
     }
@@ -159,6 +166,7 @@
         background: white;
         z-index: 1;
         overflow: hidden;
+        border-radius: 4px;
     }
 
     .Box-Content_border {
@@ -169,132 +177,133 @@
 
     .Box-Image {
         width: 100%;
-        height: 100%;
     }
     </style>
     <script src="./script.js"></script>
 </head>
 
 <body>
-    <div class="TopBar">
-        <div class="Box Box_hidden Box_circle Box_big">
-            <div class="Box-Content">
-                ?
-            </div>
-        </div>
-        <div class="TopBar-Items">
-            <div class="Box Box_hidden Box_terrain">
-                <div class="Box-Cap"></div>
-                <div class="Box-Color"></div>
-                <div class="Box-Container">
-                    <div class="Box-Content Box-Content_border">
-                        <img class="Box-Image">
-                    </div>
-                </div>
-            </div>
-            <div class="Box Box_hidden Box_items">
-                <div class="Box-Cap"></div>
-                <div class="Box-Color"></div>
-                <div class="Box-Container">
-                    <div class="Box-Content Box-Content_border">
-                        <img class="Box-Image">
-                    </div>
-                </div>
-            </div>
-            <div class="Box Box_hidden Box_enemies">
-                <div class="Box-Cap"></div>
-                <div class="Box-Color"></div>
-                <div class="Box-Container">
-                    <div class="Box-Content Box-Content_border">
-                        <img class="Box-Image">
-                    </div>
-                </div>
-            </div>
-            <div class="Box Box_hidden Box_gizmos">
-                <div class="Box-Cap"></div>
-                <div class="Box-Color"></div>
-                <div class="Box-Container">
-                    <div class="Box-Content Box-Content_border">
-                        <img class="Box-Image">
-                    </div>
-                </div>
-            </div>
-            <div class="Box Box_hidden Box_terrain">
-                <div class="Box-Cap"></div>
-                <div class="Box-Color"></div>
-                <div class="Box-Container">
-                    <div class="Box-Content Box-Content_border">
-                        <img class="Box-Image">
-                    </div>
-                </div>
-            </div>
-            <div class="Box Box_hidden Box_items">
-                <div class="Box-Cap"></div>
-                <div class="Box-Color"></div>
-                <div class="Box-Container">
-                    <div class="Box-Content Box-Content_border">
-                        <img class="Box-Image">
-                    </div>
-                </div>
-            </div>
-            <div class="Box Box_hidden Box_enemies">
-                <div class="Box-Cap"></div>
-                <div class="Box-Color"></div>
-                <div class="Box-Container">
-                    <div class="Box-Content Box-Content_border">
-                        <img class="Box-Image">
-                    </div>
-                </div>
-            </div>
-            <div class="Box Box_hidden Box_gizmos">
-                <div class="Box-Cap"></div>
-                <div class="Box-Color"></div>
-                <div class="Box-Container">
-                    <div class="Box-Content Box-Content_border">
-                        <img class="Box-Image">
-                    </div>
-                </div>
-            </div>
-            <div class="Box Box_hidden Box_terrain">
-                <div class="Box-Cap"></div>
-                <div class="Box-Color"></div>
-                <div class="Box-Container">
-                    <div class="Box-Content Box-Content_border">
-                        <img class="Box-Image">
-                    </div>
-                </div>
-            </div>
-            <div class="Box Box_hidden Box_items">
-                <div class="Box-Cap"></div>
-                <div class="Box-Color"></div>
-                <div class="Box-Container">
-                    <div class="Box-Content Box-Content_border">
-                        <img class="Box-Image">
-                    </div>
-                </div>
-            </div>
-            <div class="Box Box_hidden Box_enemies">
-                <div class="Box-Cap"></div>
-                <div class="Box-Color"></div>
-                <div class="Box-Container">
-                    <div class="Box-Content Box-Content_border">
-                        <img class="Box-Image">
-                    </div>
-                </div>
-            </div>
-            <div class="Box Box_hidden Box_gizmos">
-                <div class="Box-Cap"></div>
-                <div class="Box-Color"></div>
-                <div class="Box-Container">
-                    <div class="Box-Content Box-Content_border">
-                        <img class="Box-Image">
-                    </div>
+    <div id="main_toolbar" class="TopBar">
+        <div id="game_button" class="Box Box_hidden Box_big Box_rect">
+            <div class="Box-Container">
+                <div class="Box-Content">
+                    <img class="Box-Image" src="./assets/smb/logo.png">
                 </div>
             </div>
         </div>
-        <div class="Box Box_hidden Box_big">
+        <div id="object_toolbar" class="TopBar-Items">
+            <div class="Box Box_hidden Box_terrain">
+                <div class="Box-Cap"></div>
+                <div class="Box-Color"></div>
+                <div class="Box-Container">
+                    <div class="Box-Content Box-Content_border">
+                        <img class="Box-Image">
+                    </div>
+                </div>
+            </div>
+            <div class="Box Box_hidden Box_items">
+                <div class="Box-Cap"></div>
+                <div class="Box-Color"></div>
+                <div class="Box-Container">
+                    <div class="Box-Content Box-Content_border">
+                        <img class="Box-Image">
+                    </div>
+                </div>
+            </div>
+            <div class="Box Box_hidden Box_enemies">
+                <div class="Box-Cap"></div>
+                <div class="Box-Color"></div>
+                <div class="Box-Container">
+                    <div class="Box-Content Box-Content_border">
+                        <img class="Box-Image">
+                    </div>
+                </div>
+            </div>
+            <div class="Box Box_hidden Box_gizmos">
+                <div class="Box-Cap"></div>
+                <div class="Box-Color"></div>
+                <div class="Box-Container">
+                    <div class="Box-Content Box-Content_border">
+                        <img class="Box-Image">
+                    </div>
+                </div>
+            </div>
+            <div class="Box Box_hidden Box_terrain">
+                <div class="Box-Cap"></div>
+                <div class="Box-Color"></div>
+                <div class="Box-Container">
+                    <div class="Box-Content Box-Content_border">
+                        <img class="Box-Image">
+                    </div>
+                </div>
+            </div>
+            <div class="Box Box_hidden Box_items">
+                <div class="Box-Cap"></div>
+                <div class="Box-Color"></div>
+                <div class="Box-Container">
+                    <div class="Box-Content Box-Content_border">
+                        <img class="Box-Image">
+                    </div>
+                </div>
+            </div>
+            <div class="Box Box_hidden Box_enemies">
+                <div class="Box-Cap"></div>
+                <div class="Box-Color"></div>
+                <div class="Box-Container">
+                    <div class="Box-Content Box-Content_border">
+                        <img class="Box-Image">
+                    </div>
+                </div>
+            </div>
+            <div class="Box Box_hidden Box_gizmos">
+                <div class="Box-Cap"></div>
+                <div class="Box-Color"></div>
+                <div class="Box-Container">
+                    <div class="Box-Content Box-Content_border">
+                        <img class="Box-Image">
+                    </div>
+                </div>
+            </div>
+            <div class="Box Box_hidden Box_terrain">
+                <div class="Box-Cap"></div>
+                <div class="Box-Color"></div>
+                <div class="Box-Container">
+                    <div class="Box-Content Box-Content_border">
+                        <img class="Box-Image">
+                    </div>
+                </div>
+            </div>
+            <div class="Box Box_hidden Box_items">
+                <div class="Box-Cap"></div>
+                <div class="Box-Color"></div>
+                <div class="Box-Container">
+                    <div class="Box-Content Box-Content_border">
+                        <img class="Box-Image">
+                    </div>
+                </div>
+            </div>
+            <div class="Box Box_hidden Box_enemies">
+                <div class="Box-Cap"></div>
+                <div class="Box-Color"></div>
+                <div class="Box-Container">
+                    <div class="Box-Content Box-Content_border">
+                        <img class="Box-Image">
+                    </div>
+                </div>
+            </div>
+            <div class="Box Box_hidden Box_gizmos">
+                <div class="Box-Cap"></div>
+                <div class="Box-Color"></div>
+                <div class="Box-Container">
+                    <div class="Box-Content Box-Content_border">
+                        <img class="Box-Image">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="shuffle_button" class="Box Box_hidden Box_circle Box_big">
             <div class="Box-Content">
-                !
+                <img class="Box-Image" src="./assets/shuffle.svg">
             </div>
         </div>
     </div>

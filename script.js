@@ -216,14 +216,15 @@ for (let gameKey in gameObjects) {
 
 const getObject = function (gameKey, typeKey, objectKey) {
   return {
+    gameKey,
+    typeKey,
+    objectKey,
     name: nameMap[typeKey][objectKey],
     image: `./assets/${gameKey}/${typeKey}/${objectKey}.png`
   }
 }
 
-const getRandomObjects = function (count) {
-  let gameKeys = Object.keys(nameMap.games)
-  let gameKey = gameKeys[Math.floor(Math.random()*gameKeys.length)]
+const getRandomObjects = function (gameKey, count) {
   let objectList = []
   for (let index = 0; index < count; index++) {
     let lastLength = objectList.length
@@ -241,19 +242,64 @@ const getRandomObjects = function (count) {
   return objectList
 }
 
+const createButton = function (object) {
+  let typeClass = `Box_${object.typeKey}`
+  let container = document.createElement('div')
+  container.innerHTML = `
+    <div class="Box Box_hidden ${typeClass}">
+      <div class="Box-Cap"></div>
+      <div class="Box-Color"></div>
+      <div class="Box-Container">
+        <div class="Box-Content Box-Content_border">
+          <img class="Box-Image" src="${object.image}">
+        </div>
+      </div>
+    </div>
+  `
+  return container.firstElementChild
+}
+
+const createGameButton = function (gameKey) {
+  let container = document.createElement('div')
+  container.innerHTML = `
+    <div id="game_button" class="Box Box_hidden Box_big Box_rect">
+      <div class="Box-Container">
+        <div class="Box-Content">
+          <img class="Box-Image" src="./assets/${gameKey}/logo.png">
+        </div>
+      </div>
+    </div>
+  `
+  return container.firstElementChild
+}
+
+const shuffle = function (gameKey) {
+  let objectToolbar = document.getElementById('object_toolbar')
+  let boxList = Array.prototype.slice.apply(objectToolbar.querySelectorAll('.Box'))
+  let objects = getRandomObjects(gameKey, boxList.length)
+  for (let index = 0; index < boxList.length; index++) {
+    let box = boxList[index]
+    let newBox = createButton(objects[index])
+    objectToolbar.replaceChild(newBox, box)
+    setTimeout(((box) => {
+      return () => box.classList.remove('Box_hidden')
+    })(newBox), 25*(index+1))
+  }
+}
+
 window.addEventListener('DOMContentLoaded', (event) => {
-  let boxes = Array.prototype.slice.apply(document.body.querySelectorAll('.Box_hidden'))
-  for (let index = 0; index < boxes.length; index++) {
-    let box = boxes[index]
+  let activeGameKey = 'smbu'
+  let mainToolbar = document.getElementById('main_toolbar')
+  let gameButton = document.getElementById('game_button')
+  mainToolbar.replaceChild(createGameButton(activeGameKey), gameButton)
+  shuffle(activeGameKey)
+  let boxList = Array.prototype.slice.apply(document.body.querySelectorAll('.Box_hidden'))
+  for (let index = 0; index < boxList.length; index++) {
+    let box = boxList[index]
     setTimeout(() => {
       box.classList.remove('Box_hidden')
     }, 25*index)
   }
-  let boxImageList = Array.prototype.slice.apply(document.body.querySelectorAll('.Box-Image'))
-  let objects = getRandomObjects(boxImageList.length)
-  for (let index = 0; index < boxes.length; index++) {
-    let boxImage = boxImageList[index]
-    boxImage.src = objects[index].image
-  }
+  document.getElementById('shuffle_button').addEventListener('click', (event) => shuffle(activeGameKey))
   // document.body.innerHTML = imagesHtml
 })
