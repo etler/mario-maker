@@ -227,18 +227,6 @@ const makeRandomObject = function (gameKey, typeKey) {
 
 // Render Methods
 
-const createShuffleButton = function (gameKey) {
-  let container = document.createElement('div')
-  container.innerHTML = `
-    <div id="shuffle_button" class="Box Box_circle">
-      <div class="Box-Content">
-        <img class="Box-Image" src="./assets/shuffle.svg" draggable="false">
-      </div>
-    </div>
-  `
-  return container.firstElementChild
-}
-
 const createGameButton = function (gameKey) {
   let container = document.createElement('div')
   container.innerHTML = `
@@ -323,25 +311,10 @@ const exposeButtonList = function (buttonList, offset = 0) {
 
 // Refresh Methods
 
-const updateShuffleButton = function (state) {
-  let mainToolbar = document.getElementById('main_toolbar')
-  let shuffleButton = createShuffleButton()
-  mainToolbar.replaceChild(shuffleButton, mainToolbar.querySelector('#shuffle_button'))
-  shuffleButton.addEventListener('click', (event) => {
-    updateShuffleButton(state)
-    updateObjects(state.shuffle())
-    clearSelectors(state)
-  })
-}
-
 const updateGameButton = function (state) {
-  let mainToolbar = document.getElementById('main_toolbar')
-  let gameButton = createGameButton(state.activeGameKey)
-  mainToolbar.replaceChild(gameButton, mainToolbar.querySelector('.Box_rect'))
-  gameButton.addEventListener('click', (event) => {
-    updateGameButton(state)
-    setGameSelectors(state)
-  })
+  let gameButton = document.getElementById('game_button')
+  let gameImage = gameButton.querySelector('img')
+  gameImage.src = `./assets/${state.activeGameKey}/logo.png`
 }
 
 let disableClick = false
@@ -627,7 +600,6 @@ window.addEventListener('DOMContentLoaded', (event) => {
   state.parseSerializedState(location.hash.replace('#', ''))
   setPreloadLinks(state)
   updateGameButton(state)
-  updateShuffleButton(state)
   updateObjects(state)
   let boxList = Array.prototype.slice.apply(document.body.querySelectorAll('.Box'))
   for (let index = 0; index < boxList.length; index++) {
@@ -638,4 +610,12 @@ window.addEventListener('DOMContentLoaded', (event) => {
   document.body.addEventListener('click', (event) => {disableClick = false})
   document.body.addEventListener('mouseout', (event) => {disableClick = false})
   document.querySelector('#save_button').addEventListener('click', (event) => {setSerializedUrl(state)})
+  document.querySelector('#shuffle_button').addEventListener('click', (event) => {
+    updateObjects(state.shuffle())
+    clearSelectors(state)
+  })
+  document.querySelector('#game_button').addEventListener('click', (event) => {
+    updateGameButton(state)
+    setGameSelectors(state)
+  })
 })

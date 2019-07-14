@@ -14,7 +14,6 @@
     background: #c5e3fd;
     padding: 0;
     margin: 0;
-    user-select: none;
   }
 
   .Main {
@@ -69,12 +68,16 @@
     border-radius: 8px;
     box-shadow: 0 3px 4px rgba(0, 0, 0, 0.2);
     transform: scale(1, 1);
-    transition: transform 0.25s;
+    transition: transform 0.05s;
     cursor: pointer;
   }
 
   .Box:hover {
     transform: scale(1.1, 1.1);
+  }
+
+  .Box:active {
+    transform: scale(0.9, 0.9);
   }
 
   .Box_animated:active {
@@ -102,6 +105,10 @@
 
   .Box_big:hover {
     transform: scale(1.2, 1.2);
+  }
+
+  .Box_big:active {
+    transform: scale(1, 1);
   }
 
   .Box_locked::before {
@@ -233,6 +240,7 @@
 
   .Box-Image {
     width: 100%;
+    user-select: none;
   }
 
   .Help {
@@ -306,7 +314,7 @@
 <body>
   <div class="TopBar">
     <div id="main_toolbar" class="TopBar-Content">
-      <div class="Box Box_big Box_rect">
+      <div id="game_button" class="Box Box_big Box_rect">
         <div class="Box-Container">
           <div class="Box-Content">
             <img class="Box-Image" src="./assets/smb/logo.png" draggable="false">
