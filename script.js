@@ -616,6 +616,11 @@ window.addEventListener('DOMContentLoaded', (event) => {
      event.stopPropagation();
      return false;
   }
+  window.addEventListener('beforeunload', function() {
+    window.dataLayer.push({
+      event: 'close'
+    });
+  });
   let state = new State()
   state.parseSerializedState(location.hash.replace('#', ''))
   setPreloadLinks(state)
