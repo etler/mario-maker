@@ -230,7 +230,7 @@ const makeRandomObject = function (gameKey, typeKey) {
 const createShuffleButton = function (gameKey) {
   let container = document.createElement('div')
   container.innerHTML = `
-    <div id="shuffle_button" class="Box Box_circle Box_big">
+    <div id="shuffle_button" class="Box Box_circle">
       <div class="Box-Content">
         <img class="Box-Image" src="./assets/shuffle.svg">
       </div>
