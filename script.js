@@ -232,7 +232,7 @@ const createShuffleButton = function (gameKey) {
   container.innerHTML = `
     <div id="shuffle_button" class="Box Box_circle">
       <div class="Box-Content">
-        <img class="Box-Image" src="./assets/shuffle.svg">
+        <img class="Box-Image" src="./assets/shuffle.svg" draggable="false">
       </div>
     </div>
   `
@@ -245,7 +245,7 @@ const createGameButton = function (gameKey) {
     <div class="Box Box_big Box_rect">
       <div class="Box-Container">
         <div class="Box-Content">
-          <img class="Box-Image" src="./assets/${gameKey}/logo.png">
+          <img class="Box-Image" src="./assets/${gameKey}/logo.png" draggable="false">
         </div>
       </div>
     </div>
@@ -258,7 +258,7 @@ const createTypeButton = function (typeKey) {
   container.innerHTML = `
     <div class="Box Box_circle Box_big">
       <div class="Box-Content">
-        <img class="Box-Image" src="./assets/${typeKey}.png">
+        <img class="Box-Image" src="./assets/${typeKey}.png" draggable="false">
       </div>
     </div>
   `
@@ -274,7 +274,7 @@ const createObjectButton = function (object) {
       <div class="Box-Color"></div>
       <div class="Box-Container">
         <div class="Box-Content Box-Content_border">
-          <img class="Box-Image" src="${object.image}">
+          <img class="Box-Image" src="${object.image}" draggable="false">
         </div>
       </div>
     </div>
