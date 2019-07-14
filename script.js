@@ -200,7 +200,7 @@ gameObjects = {
   }
 }
 
-// Methods
+// Data Methods
 
 const makeObject = function ({gameKey, typeKey, index, locked = false}) {
   const objectKey = gameObjects[gameKey][typeKey][index]
@@ -224,6 +224,8 @@ const makeRandomObject = function (gameKey, typeKey) {
   let objectIndex = Math.floor(Math.random()*typeObjectList.length)
   return makeObject({gameKey, typeKey, index: objectIndex})
 }
+
+// Render Methods
 
 const createGameButton = function (gameKey) {
   let container = document.createElement('div')
@@ -284,6 +286,16 @@ const createRerollButton = function (typeKey) {
   return container.firstElementChild
 }
 
+const createPreloadLink = function (object) {
+  let container = document.createElement('div')
+  container.innerHTML = `
+      <link rel="preload" href="${object.image}" as="image" type="image/png">
+  `
+  return container.firstElementChild
+}
+
+// Element Mutators
+
 const exposeButton = function (button, delay = 0) {
   button.classList.add('Box_hidden')
   setTimeout(() => {
@@ -297,7 +309,7 @@ const exposeButtonList = function (buttonList, offset = 0) {
   }
 }
 
-// Global Mutators
+// Refresh Methods
 
 const updateGameButton = function (state) {
   let mainToolbar = document.getElementById('main_toolbar')
@@ -474,6 +486,19 @@ const setObjectSelectors = function (state, typeKey) {
   rerollButton.addEventListener('click', handleRerollButton)
 }
 
+const setPreloadLinks = function (state) {
+  let head = document.querySelector('head')
+  for (let gameKey in gameObjects) {
+    for (let typeKey in gameObjects[gameKey]) {
+      for (let index = 0; index < gameObjects[gameKey][typeKey].length; index++) {
+        let object = makeObject({gameKey, typeKey, index})
+        let preloadLink = createPreloadLink(object)
+        head.appendChild(preloadLink)
+      }
+    }
+  }
+}
+
 // Global State
 
 class State {
@@ -529,6 +554,7 @@ class State {
 
 window.addEventListener('DOMContentLoaded', (event) => {
   let state = new State()
+  setPreloadLinks(state)
   updateGameButton(state)
   updateObjects(state)
   let boxList = Array.prototype.slice.apply(document.body.querySelectorAll('.Box'))
