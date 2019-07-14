@@ -227,6 +227,18 @@ const makeRandomObject = function (gameKey, typeKey) {
 
 // Render Methods
 
+const createShuffleButton = function (gameKey) {
+  let container = document.createElement('div')
+  container.innerHTML = `
+    <div id="shuffle_button" class="Box Box_circle Box_big">
+      <div class="Box-Content">
+        <img class="Box-Image" src="./assets/shuffle.svg">
+      </div>
+    </div>
+  `
+  return container.firstElementChild
+}
+
 const createGameButton = function (gameKey) {
   let container = document.createElement('div')
   container.innerHTML = `
@@ -311,11 +323,24 @@ const exposeButtonList = function (buttonList, offset = 0) {
 
 // Refresh Methods
 
+const updateShuffleButton = function (state) {
+  let mainToolbar = document.getElementById('main_toolbar')
+  let shuffleButton = createShuffleButton()
+  mainToolbar.replaceChild(shuffleButton, mainToolbar.querySelector('#shuffle_button'))
+  shuffleButton.addEventListener('click', (event) => {
+    updateShuffleButton(state)
+    updateObjects(state.shuffle())
+  })
+}
+
 const updateGameButton = function (state) {
   let mainToolbar = document.getElementById('main_toolbar')
   let gameButton = createGameButton(state.activeGameKey)
   mainToolbar.replaceChild(gameButton, mainToolbar.querySelector('.Box_rect'))
-  gameButton.addEventListener('click', (event) => setGameSelectors(state))
+  gameButton.addEventListener('click', (event) => {
+    updateGameButton(state)
+    setGameSelectors(state)
+  })
 }
 
 let disableClick = false
@@ -400,6 +425,7 @@ const setGameSelectors = function (state) {
       state.activeGameKey = gameKey
       updateGameButton(state)
       updateObjects(state)
+      clearSelectors(state)
     }
   }
   smbButton.addEventListener('click', handleGameButton('smb'))
@@ -561,6 +587,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
   let state = new State()
   setPreloadLinks(state)
   updateGameButton(state)
+  updateShuffleButton(state)
   updateObjects(state)
   let boxList = Array.prototype.slice.apply(document.body.querySelectorAll('.Box'))
   for (let index = 0; index < boxList.length; index++) {
@@ -568,9 +595,6 @@ window.addEventListener('DOMContentLoaded', (event) => {
     box.classList.add('Box_hidden')
     exposeButton(box, index)
   }
-  document.getElementById('shuffle_button').addEventListener('click', (event) => {
-    updateObjects(state.shuffle())
-  })
   document.body.addEventListener('click', (event) => {disableClick = false})
   document.body.addEventListener('mouseout', (event) => {disableClick = false})
 })
