@@ -526,6 +526,13 @@ const setPreloadLinks = function (state) {
   }
 }
 
+const setSerializedUrl = function (state) {
+  let serializedObjectsString = state.objectList.map((object) => `${object.typeKey[0]}${object.index}`).join(',')
+  let serializedString = `g=${state.activeGameKey}&o=${serializedObjectsString}`
+  location.hash = serializedString
+  navigator.clipboard.writeText(location)
+}
+
 // Global State
 
 class State {
@@ -557,6 +564,30 @@ class State {
       }
     }
   }
+  parseSerializedState (stateString) {
+    try {
+      let attributes = stateString.split('&')
+      for (let index = 0; index < attributes.length; index++) {
+        let key = attributes[index].split('=')[0]
+        let value = attributes[index].split('=')[1]
+        switch (key) {
+          case 'g':
+            this.activeGameKey = value
+            break;
+          case 'o':
+            this.objectList = value.split(',').map((value) => {
+              let matches = value.match(/([a-z])([0-9]+)/)
+              let typeKey = ({'t': 'terrain', 'i': 'items', 'e': 'enemies', 'g': 'gizmos'})[matches[1]]
+              let index = parseInt(matches[2])
+              return makeObject({gameKey: this.activeGameKey, typeKey, index, locked: true})
+            })
+            break;
+        }
+      }
+    } catch (error) {
+      console.error(error)
+    }
+  }
   shuffle () {
     let newObjectList = []
     for (let index = 0; index < 12; index++) {
@@ -586,6 +617,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
      return false;
   }
   let state = new State()
+  state.parseSerializedState(location.hash.replace('#', ''))
   setPreloadLinks(state)
   updateGameButton(state)
   updateShuffleButton(state)
@@ -598,4 +630,5 @@ window.addEventListener('DOMContentLoaded', (event) => {
   }
   document.body.addEventListener('click', (event) => {disableClick = false})
   document.body.addEventListener('mouseout', (event) => {disableClick = false})
+  document.querySelector('#save_button').addEventListener('click', (event) => {setSerializedUrl(state)})
 })

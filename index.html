@@ -20,6 +20,7 @@
   .Main {
     max-width: 1080px;
     margin: auto;
+    padding-bottom: 80px;
   }
 
   .Main-Content {
@@ -78,7 +79,7 @@
 
   .Box_animated:active {
     transform: scale(1, 1);
-    animation: Box_revertDelay 1s;
+    animation: Box_revertDelay 0.75s;
   }
 
   @keyframes Box_revertDelay {
@@ -168,7 +169,7 @@
   }
 
   .Box_animated:active .Box-Color {
-    animation: Box-Color_animation 1s linear;
+    animation: Box-Color_animation 0.75s linear;
   }
 
   @keyframes Box-Color_animation {
@@ -255,6 +256,13 @@
 
   sub {
     font-size: 9px;
+  }
+
+  #save_button {
+    position: fixed;
+    bottom: 12px;
+    right: 12px;
+    z-index: 5;
   }
 
   @media (max-width: 768px) {
@@ -420,6 +428,13 @@
     </div>
   </div>
   <div id="main" class="Main">
+    <div id="save_button" class="Box">
+      <div class="Box-Container">
+        <div class="Box-Content">
+          <img class="Box-Image" src="./assets/coursebot.png">
+        </div>
+      </div>
+    </div>
     <div class="Main-Content">
       <div class="Help">
         <h1>Super&nbsp;Mario Maker&nbsp;2 — 12&nbsp;Item Challenge Generator</h1>
