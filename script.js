@@ -618,8 +618,8 @@ window.addEventListener('DOMContentLoaded', (event) => {
      return false;
   }
   window.addEventListener('beforeunload', function() {
-    gtag('event', 'close', {
-      'event_category': 'time_on_site',
+    gtag('event', 'time_on_site', {
+      'event_category': 'lifecycle',
       'value': Date.now() - startTime
     });
   });
