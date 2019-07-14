@@ -300,7 +300,7 @@ const exposeButton = function (button, delay = 0) {
   button.classList.add('Box_hidden')
   setTimeout(() => {
     button.classList.remove('Box_hidden')
-  }, 10*(delay+1))
+  }, 20*(delay+1))
 }
 
 const exposeButtonList = function (buttonList, offset = 0) {
