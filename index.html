@@ -253,7 +253,14 @@
   }
 
   @media (max-width: 768px) {
+    .TopBar-Content {
+      justify-content: space-between;
+    }
+    .TopBar-Content > .Box:first-child {
+      margin-left: 18px;
+    }
     .TopBar-Items {
+      order: 3;
       margin-left: 0;
       margin-right: -18px;
     }
