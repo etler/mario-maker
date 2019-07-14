@@ -121,6 +121,11 @@
     transform: scale(0, 0);
   }
 
+  .Box_filler {
+    display: none;
+    opacity: 0;
+  }
+
   .Box_terrain {
     color: #11e4ff;
   }
@@ -252,9 +257,6 @@
   }
 
   @media (max-width: 768px) {
-    .TopBar-Content {
-      justify-content: space-between;
-    }
     .TopBar-Content > .Box:first-child {
       margin-left: 12px;
     }
@@ -265,6 +267,9 @@
       order: 3;
       margin-left: 0;
       margin-right: 0;
+    }
+    .Box_filler {
+      display: flex;
     }
   }
 
@@ -288,6 +293,10 @@
             <img class="Box-Image" src="./assets/smb/logo.png">
           </div>
         </div>
+      </div>
+      <div class="Box Box_filler">
+      </div>
+      <div class="Box Box_filler">
       </div>
       <div id="object_toolbar" class="TopBar-Items">
         <div class="Box Box_terrain">
