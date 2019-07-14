@@ -611,14 +611,16 @@ class State {
 // Global Management
 
 window.addEventListener('DOMContentLoaded', (event) => {
+  let startTime = Date.now()
   window.oncontextmenu = (event) => {
      event.preventDefault();
      event.stopPropagation();
      return false;
   }
   window.addEventListener('beforeunload', function() {
-    window.dataLayer.push({
-      event: 'close'
+    gtag('event', 'close', {
+      'event_category': 'time_on_site',
+      'value': Date.now() - startTime
     });
   });
   let state = new State()
