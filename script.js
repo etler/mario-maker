@@ -553,7 +553,11 @@ class State {
 // Global Management
 
 window.addEventListener('DOMContentLoaded', (event) => {
-  document.oncontextmenu = (event) => false
+  window.oncontextmenu = (event) => {
+     event.preventDefault();
+     event.stopPropagation();
+     return false;
+  }
   let state = new State()
   setPreloadLinks(state)
   updateGameButton(state)
