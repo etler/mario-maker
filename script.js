@@ -330,6 +330,7 @@ const updateShuffleButton = function (state) {
   shuffleButton.addEventListener('click', (event) => {
     updateShuffleButton(state)
     updateObjects(state.shuffle())
+    clearSelectors(state)
   })
 }
 
