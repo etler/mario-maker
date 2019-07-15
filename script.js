@@ -353,6 +353,7 @@ const updateObjects = function (state) {
         disableClick = true
         gtag('event', 'pin_object_button', {
           'event_category': 'interaction',
+          'event_label': `${object.gameKey}_${object.objectKey}`
         })
       }
     }
