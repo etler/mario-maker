@@ -335,6 +335,9 @@ const updateObjects = function (state) {
           updateObjects(state)
           clearSelectors(state)
         }
+        gtag('event', 'click_object_button', {
+          'event_category': 'interaction'
+        })
       }
     }
   }
@@ -348,6 +351,9 @@ const updateObjects = function (state) {
           event.target.classList.remove('Box_locked')
         }
         disableClick = true
+        gtag('event', 'pin_object_button', {
+          'event_category': 'interaction',
+        })
       }
     }
   }
@@ -400,6 +406,10 @@ const setGameSelectors = function (state) {
       updateGameButton(state)
       updateObjects(state)
       clearSelectors(state)
+      gtag('event', 'click_set_game_button', {
+        'event_category': 'interaction',
+        'event_label': gameKey
+      })
     }
   }
   smbButton.addEventListener('click', handleGameButton('smb'))
@@ -433,6 +443,10 @@ const setTypeSelectors = function (state) {
   const handleTypeButton = function (typeKey) {
     return (event) => {
       setObjectSelectors(state, typeKey)
+      gtag('event', 'click_set_type_button', {
+        'event_category': 'interaction',
+        'event_label': `${state.activeGameKey}_${typeKey}`
+      })
     }
   }
   terrainButton.addEventListener('click', handleTypeButton('terrain'))
@@ -463,6 +477,10 @@ const setObjectSelectors = function (state, typeKey) {
       state.objectList[index].locked = locked
       updateObjects(state)
       clearSelectors(state)
+      gtag('event', 'click_set_object_button', {
+        'event_category': 'interaction',
+        'event_label': `${object.gameKey}_${object.objectKey}`
+      })
     }
   }
   objectButtons.forEach((button, index) => {
@@ -479,6 +497,10 @@ const setObjectSelectors = function (state, typeKey) {
       state.objectList[index].locked = locked
       updateObjects(state)
       clearSelectors(state)
+      gtag('event', 'click_set_object_button', {
+        'event_category': 'interaction',
+        'event_label': `${state.activeGameKey}_${typeKey}_random`
+      })
   }
   clearSelectors(state)
   main.appendChild(content)
@@ -591,10 +613,20 @@ window.addEventListener('DOMContentLoaded', (event) => {
      return false;
   }
   window.addEventListener('beforeunload', function() {
+    let time = (Date.now()-startTime)/1000
+    let timeLabel = ''
+    if (time < 60) {
+      timeLabel = `${Math.floor(time/10)*10}s`
+    } else if (time < 60*60) {
+      timeLabel = `${Math.floor(time/60)}m`
+    } else {
+      timeLabel = `${Math.floor(time/(60*60))}h`
+    }
     gtag('event', 'time_on_site', {
       'event_category': 'lifecycle',
-      'value': Date.now() - startTime
-    });
+      'event_label': timeLabel,
+      'value': time
+    })
   });
   let state = new State()
   state.parseSerializedState(location.hash.replace('#', ''))
@@ -609,13 +641,24 @@ window.addEventListener('DOMContentLoaded', (event) => {
   }
   document.body.addEventListener('click', (event) => {disableClick = false})
   document.body.addEventListener('mouseout', (event) => {disableClick = false})
-  document.querySelector('#save_button').addEventListener('click', (event) => {setSerializedUrl(state)})
+  document.querySelector('#save_button').addEventListener('click', (event) => {
+    setSerializedUrl(state)
+    gtag('event', 'click_save_button', {
+      'event_category': 'interaction'
+    })
+  })
   document.querySelector('#shuffle_button').addEventListener('click', (event) => {
     updateObjects(state.shuffle())
     clearSelectors(state)
+    gtag('event', 'click_shuffle_button', {
+      'event_category': 'interaction'
+    })
   })
   document.querySelector('#game_button').addEventListener('click', (event) => {
     updateGameButton(state)
     setGameSelectors(state)
+    gtag('event', 'click_game_button', {
+      'event_category': 'interaction'
+    })
   })
 })
