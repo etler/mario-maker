@@ -644,7 +644,8 @@ window.addEventListener('DOMContentLoaded', (event) => {
   document.querySelector('#save_button').addEventListener('click', (event) => {
     setSerializedUrl(state)
     gtag('event', 'click_save_button', {
-      'event_category': 'interaction'
+      'event_category': 'interaction',
+      'event_label': location.hash
     })
   })
   document.querySelector('#shuffle_button').addEventListener('click', (event) => {
